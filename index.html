@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Links – Marketing Reference</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "DM Sans", system-ui, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #0f0f12;
+      color: #e4e4e7;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #fff;
+    }
+    .subtitle {
+      color: #71717a;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+    .card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.15s ease;
+      cursor: pointer;
+    }
+    .card:hover {
+      border-color: #3f3f46;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 0.75rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #27272a;
+    }
+    .card-content {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #a1a1aa;
+    }
+    .card-content a {
+      color: #a78bfa;
+      text-decoration: none;
+    }
+    .card-content a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Social Links</h1>
+  <p class="subtitle">Click a card to copy its text.</p>
+  <div class="cards" id="cards"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // CONFIG – Edit this. Each card has a title and content (one paragraph of text).
+    // Content can include plain text and URLs; URLs will be clickable in the UI.
+    // ═══════════════════════════════════════════════════════════════════════
+    const CONFIG = {
+      cards: [
+        {
+          title: "YouTube description",
+          content:
+            "Check out my website: https://yoursite.com • Bandcamp: https://yourname.bandcamp.com • Instagram: https://instagram.com/yourhandle • Patreon: https://patreon.com/yourname • Twitter/X: https://x.com/yourhandle",
+        },
+        {
+          title: "Instagram bio / link in bio",
+          content:
+            "Website: https://yoursite.com • Bandcamp: https://yourname.bandcamp.com • Patreon: https://patreon.com/yourname",
+        },
+        {
+          title: "Instagram post / reel caption",
+          content:
+            "Link in bio for more! https://yoursite.com • Bandcamp: https://yourname.bandcamp.com",
+        },
+        {
+          title: "Patreon post",
+          content:
+            "Website: https://yoursite.com • Bandcamp: https://yourname.bandcamp.com • Instagram: https://instagram.com/yourhandle • Twitter/X: https://x.com/yourhandle",
+        },
+        {
+          title: "Bandcamp / album description",
+          content:
+            "More at https://yoursite.com • Instagram: https://instagram.com/yourhandle • Support on Patreon: https://patreon.com/yourname",
+        },
+        {
+          title: "Twitter/X post",
+          content:
+            "Website: https://yoursite.com • Bandcamp: https://yourname.bandcamp.com • Instagram: https://instagram.com/yourhandle • Patreon: https://patreon.com/yourname",
+        },
+      ],
+    };
+
+    // Makes URLs in plain text clickable (for display only; copy uses raw content).
+    function linkify(text) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+      return escaped.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+    }
+
+    function renderCards() {
+      const container = document.getElementById("cards");
+      container.innerHTML = "";
+
+      CONFIG.cards.forEach((card, index) => {
+        const block = document.createElement("div");
+        block.className = "card";
+
+        const titleEl = document.createElement("h2");
+        titleEl.className = "card-title";
+        titleEl.textContent = card.title;
+
+        const contentEl = document.createElement("div");
+        contentEl.className = "card-content";
+        contentEl.innerHTML = linkify(card.content);
+
+        block.appendChild(titleEl);
+        block.appendChild(contentEl);
+
+        block.addEventListener("click", (e) => {
+          if (e.target.closest("a")) return;
+          const text = CONFIG.cards[index].content;
+          navigator.clipboard.writeText(text).then(() => {
+            const original = card.title;
+            titleEl.textContent = "Copied to clipboard";
+            setTimeout(() => {
+              titleEl.textContent = original;
+            }, 1500);
+          });
+        });
+
+        container.appendChild(block);
+      });
+    }
+
+    renderCards();
+  </script>
+</body>
+</html>
