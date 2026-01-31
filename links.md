@@ -1,6 +1,6 @@
 # YouTube description
 
-Check out my website: https://yoursite.com
+**Check out my website**: https://yoursite.com
 Bandcamp: https://yourname.bandcamp.com
 Instagram: https://instagram.com/yourhandle
 Patreon: https://patreon.com/yourname

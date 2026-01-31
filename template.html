@@ -55,11 +55,18 @@
       color: #a1a1aa;
     }
     .card-content a {
-      color: #a78bfa;
+      color: inherit;
       text-decoration: none;
     }
-    .card-content a:hover {
-      text-decoration: underline;
+    .card-content p {
+      margin: 0 0 0.5em 0;
+    }
+    .card-content p:last-child {
+      margin-bottom: 0;
+    }
+    .card-content ul, .card-content ol {
+      margin: 0 0 0.5em 0;
+      padding-left: 1.25em;
     }
   </style>
 </head>
@@ -68,21 +75,12 @@
   <p class="subtitle">Click a card to copy its text.</p>
   <div class="cards" id="cards"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     // Injected by build from links.md
     const CONFIG = {{CONFIG}};
 
-    // Makes URLs in plain text clickable; preserves newlines as <br>.
-    function linkify(text) {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const escaped = text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-      const withBreaks = escaped.replace(/\n/g, "<br>");
-      return withBreaks.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
-    }
+    marked.setOptions({ gfm: true, breaks: true });
 
     function renderCards() {
       const container = document.getElementById("cards");
@@ -98,15 +96,21 @@
 
         const contentEl = document.createElement("div");
         contentEl.className = "card-content";
-        contentEl.innerHTML = linkify(card.content);
+        contentEl.innerHTML = marked.parse(card.content);
 
         block.appendChild(titleEl);
         block.appendChild(contentEl);
 
         block.addEventListener("click", (e) => {
           if (e.target.closest("a")) return;
-          const text = CONFIG.cards[index].content;
-          navigator.clipboard.writeText(text).then(() => {
+          const plainText = contentEl.innerText;
+          const htmlContent = contentEl.innerHTML;
+          navigator.clipboard.write([
+            new ClipboardItem({
+              "text/plain": new Blob([plainText], { type: "text/plain" }),
+              "text/html": new Blob([htmlContent], { type: "text/html" }),
+            }),
+          ]).then(() => {
             const original = card.title;
             titleEl.textContent = "Copied to clipboard";
             setTimeout(() => {
