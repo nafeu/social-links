@@ -6,37 +6,51 @@ Each card is a different context (e.g. “YouTube description”, “Instagram b
 
 ## Editing
 
-Open `index.html` and find the `CONFIG` object near the top of the `<script>` block. Each card has:
+Edit **`links.md`**. The format is:
 
-- **title** – Label for the card (e.g. “YouTube description”).
-- **content** – A single paragraph of text. Include plain text and URLs; URLs are turned into clickable links in the UI. This is exactly what gets copied when you click the card.
+- A line starting with `#` (one hash and a space) starts a new card. The rest of that line is the card **title**.
+- Everything below it until the next `#` line is that card’s **content**. Newlines are preserved.
 
-Add, remove, or edit cards by changing the `cards` array in `CONFIG`.
+Example:
+
+```markdown
+# YouTube description
+
+Check out my website: https://yoursite.com
+Bandcamp: https://yourname.bandcamp.com
+Support on Patreon: https://patreon.com/yourname
+
+# Instagram bio
+
+Link in bio: https://yoursite.com
+```
+
+After editing `links.md`, run the build to regenerate `index.html` (see below).
+
+## Build
+
+The site is built from `links.md` and `template.html`:
+
+```bash
+node build.js
+```
+
+This parses `links.md` and writes `index.html`. You need Node.js installed.
 
 ## Preview locally
 
-The app is a single static HTML file. No build step or server is required.
+After building (or if `index.html` already exists):
 
-**Option 1: Open in a browser**
+- **Option 1:** Open `index.html` in a browser (double-click, or `open index.html` on macOS).
+- **Option 2:** Run a local server, e.g. `python3 -m http.server 8000` or `npx serve`, then open the URL shown.
 
-- Double-click `index.html`, or  
-- Drag it into a browser window, or  
-- From the project folder: `open index.html` (macOS)
+## GitHub Pages
 
-**Option 2: Local HTTP server** (optional, e.g. if you hit file:// restrictions)
+A GitHub Action (`.github/workflows/deploy.yml`) runs on every push to `main`: it runs `node build.js` and deploys the resulting `index.html` to GitHub Pages.
 
-With Python 3:
+**One-time setup in the GitHub repo:**
 
-```bash
-python3 -m http.server 8000
-```
+1. Go to **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
 
-Then open [http://localhost:8000](http://localhost:8000) in your browser.
-
-With Node.js (npx):
-
-```bash
-npx serve
-```
-
-Then open the URL shown in the terminal (usually [http://localhost:3000](http://localhost:3000)).
+After that, each push to `main` will build and deploy. If your default branch is not `main`, edit the workflow’s `on.push.branches` in `.github/workflows/deploy.yml` to match your branch name.
